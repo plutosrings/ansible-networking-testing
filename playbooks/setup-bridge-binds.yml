@@ -1,0 +1,45 @@
+
+---
+  - name: Setup Bridge on Host
+    hosts: localhost
+    become: yes
+    vars_files:
+      - vars/bespoke/vars-setup-bridge-binds-pegasus.yml
+    vars: 
+      live: false
+    tasks:
+      - name: Install needed network manager libs for RHEL 7
+        ansible.builtin.package:
+          name:
+            - NetworkManager-libnm
+            - nm-connection-editor
+            - libsemanage-python
+            - policycoreutils-python
+          state: present
+        when: ansible_facts['distribution'] == "Red Hat" and ansible_facts['distribution_major_version'] == "7" 
+
+      - name: Install needed network manager libs for Fedora 35
+        ansible.builtin.package:
+          name:
+            - NetworkManager-libnm
+            - nm-connection-editor
+            - python3-libsemanage
+            - policycoreutils-python-utils
+          state: present
+        when: ansible_facts['distribution'] == "Fedora" and ansible_facts['distribution_major_version'] == "35" 
+
+      - name: Bind Ethernet Interfaces to Bridges Interfaces
+        nmcli:
+          type: bridge
+          conn_name: "{{ item.brname }}"
+          ifname: "{{ item.brname }}"
+          ip4: "{{ item.ip4  }}"
+          state: present
+        when: ansible_hostname == "{{ item.hostname }}"
+        with_items: "{{ new_bridge_configs }}"
+
+
+
+
+    #- name: Set umask appropriately
+

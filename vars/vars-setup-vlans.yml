@@ -1,0 +1,22 @@
+---
+  new_host_vlan_configs:
+  - { "hostname": "pegasus", "desc": "lab",  "ethname": "eth2", "vlandev": "enp1s0f0", "vlanid": "1005", "ip4": "10.0.5.1/24", "ip6": "disabled", "master": "br-lab" }
+  - { "hostname": "pegasus", "desc": "home", "ethname": "eth2", "vlandev": "enp1s0f0", "vlanid": "1006", "ip4": "10.0.6.1/24", "ip6": "disabled", "master": "br-home" }
+  - { "hostname": "pegasus", "desc": "mgmt", "ethname": "eth2", "vlandev": "enp1s0f0", "vlanid": "1007", "ip4": "10.0.7.1/24", "ip6": "disabled", "master": "br-mgmt" }
+
+  - { "hostname": "pegasus", "desc": "lab", "ethname": "eth3", "vlandev": "enp1s0f1", "vlanid": "1005", "ip4": "10.0.5.2/24", "ip6": "disabled", "master": "br-lab" }
+  - { "hostname": "pegasus", "desc": "lab", "ethname": "eth3", "vlandev": "enp1s0f1", "vlanid": "1006", "ip4": "10.0.6.2/24", "ip6": "disabled", "master": "br-home" }
+  - { "hostname": "pegasus", "desc": "lab", "ethname": "eth3", "vlandev": "enp1s0f1", "vlanid": "1007", "ip4": "10.0.7.2/24", "ip6": "disabled", "master": "br-mgmt" }
+
+
+
+
+
+  - { "hostname": "not-pegasus", "desc": "lab", "ethname": "eth3", "vlandev": "enp1s0f1", "vlanid": "1007", "ip4": "10.0.7.2/24", "ip6": "disabled", "master": "br-mgmt-derp" }
+  - { "hostname": "not-pegasus", "desc": "lab", "ethname": "eth3", "vlandev": "enp1s0f1", "vlanid": "1007", "ip4": "10.0.7.2/24", "ip6": "disabled", "master": "br-mgmt-derp" }
+  - { "hostname": "not-pegasus", "desc": "lab", "ethname": "eth3", "vlandev": "enp1s0f1", "vlanid": "1007", "ip4": "10.0.7.2/24", "ip6": "disabled", "master": "br-mgmt-derp" }
+  - { "hostname": "not-pegasus", "desc": "lab", "ethname": "eth3", "vlandev": "enp1s0f1", "vlanid": "1007", "ip4": "10.0.7.2/24", "ip6": "disabled", "master": "br-mgmt-derp" }
+  - { "hostname": "not-pegasus", "desc": "lab", "ethname": "eth3", "vlandev": "enp1s0f1", "vlanid": "1007", "ip4": "10.0.7.2/24", "ip6": "disabled", "master": "br-mgmt-derp" }
+
+
+

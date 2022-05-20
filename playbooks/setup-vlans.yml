@@ -1,0 +1,59 @@
+
+---
+  - name: Setup Vlans on Host
+    hosts: localhost
+    become: yes
+    vars_files:
+      - vars/vars-setup-vlans.yml
+    vars: 
+      live: false
+    tasks:
+      - name: Install needed network manager libs for RHEL 7
+        ansible.builtin.package:
+          name:
+            - NetworkManager-libnm
+            - nm-connection-editor
+            - libsemanage-python
+            - policycoreutils-python
+          state: present
+        when: ansible_facts['distribution'] == "Red Hat" and ansible_facts['distribution_major_version'] == "7" 
+
+      - name: Install needed network manager libs for Fedora 35
+        ansible.builtin.package:
+          name:
+            - NetworkManager-libnm
+            - nm-connection-editor
+            - python3-libsemanage
+            - policycoreutils-python-utils
+          state: present
+        when: ansible_facts['distribution'] == "Fedora" and ansible_facts['distribution_major_version'] == "35" 
+
+      - name: Create Vlan Interfaces
+        nmcli:
+          type: vlan
+          conn_name: "{{ item.ethname }}.{{ item.vlanid }}"
+          ifname: "{{ item.ethname }}.{{ item.vlanid }}"
+          vlandev: "{{ item.vlandev }}"
+          vlanid: "{{ item.vlanid }}"
+          ip4: "{{ item.ip4  }}"
+          master: "{{ item.master }}"
+          state: present
+        when: ansible_hostname == "{{ item.hostname }}"
+        with_items: "{{ new_host_vlan_configs }}"
+
+      - name: Disable ipv6 on Vlan Interfaces
+        command: "nmcli conn modify {{ item.ethname }}.{{ item.vlanid }} ipv6.method disabled"
+        when: ansible_hostname == "{{ item.hostname }}"
+        with_items: "{{ new_host_vlan_configs }}"
+
+      - name: Bind Vlan Interfaces to Bridges
+        command: "nmcli conn modify {{ item.ethname }}.{{ item.vlanid }} connection.master {{ item.master }} connection.slave-type bridge"
+        when: ansible_hostname == "{{ item.hostname }}"
+        with_items: "{{ new_host_vlan_configs }}"
+
+      - name: Re-up Vlan Interfaces
+        command: "nmcli conn up {{ item.ethname }}.{{ item.vlanid }}"
+        when: ansible_hostname == "{{ item.hostname }}"
+        with_items: "{{ new_host_vlan_configs }}"
+
+

@@ -1,0 +1,76 @@
+
+---
+  - name: Setup Bridge on Host
+    hosts: localhost
+    become: yes
+    vars_files:
+      - vars/bespoke/vars-setup-bridge-binds-pegasus.yml
+    vars: 
+      live: false
+    tasks:
+      - name: Install needed network manager libs for RHEL 7
+        ansible.builtin.package:
+          name:
+            - NetworkManager-libnm
+            - nm-connection-editor
+            - libsemanage-python
+            - policycoreutils-python
+          state: present
+        when: ansible_facts['distribution'] == "Red Hat" and ansible_facts['distribution_major_version'] == "7" 
+
+      - name: Install needed network manager libs for Fedora 35
+        ansible.builtin.package:
+          name:
+            - NetworkManager-libnm
+            - nm-connection-editor
+            - python3-libsemanage
+            - policycoreutils-python-utils
+          state: present
+        when: ansible_facts['distribution'] == "Fedora" and ansible_facts['distribution_major_version'] == "35" 
+
+      - name: Create Bridge Interfaces
+        nmcli:
+          type: bridge
+          conn_name: "{{ item.brname }}"
+          ifname: "{{ item.brname }}"
+          ip4: "{{ item.ip4  }}"
+          gw4: "{{ item.gw4 }}"
+          dns4: "{{ item.dns4 }}"
+          dns4_search: "{{ item.dns4_search }}"
+          stp: no
+          state: present
+        when: ansible_hostname == "{{ item.hostname }}"
+        with_items: "{{ new_bridge_configs }}"
+
+
+      - name: Disable ipv6 on Interfaces
+        command: "nmcli conn modify {{ item.brname }} ipv6.method disabled"
+        when: ansible_hostname == "{{ item.hostname }}"
+        with_items: "{{ new_bridge_configs }}"
+
+      - name: Bind Ethernet Interfaces to Bridges
+        command: "nmcli conn modify {{ item.ifname }} connection.master {{ item.master }} connection.slave-type bridge"
+        when: ansible_hostname == "{{ item.hostname }}"
+        with_items: "{{ new_bridge_binds }}"
+
+
+
+
+      - name: FIX NMCLI NOT SETTING DNS IN MODULE - using cmd to do so 
+        command: "nmcli conn modify {{ item.brname }} ipv4.dns {{ item.dns4 }} ipv4.dns-search {{ item.dns4_search }}"
+        when: ansible_hostname == "{{ item.hostname }}"
+        with_items: "{{ new_bridge_configs }}"
+
+
+      - name: Re-up Ethernet Interfaces
+        command: "nmcli conn up {{ item.ifname }}"
+        when: ansible_hostname == "{{ item.hostname }}"
+        with_items: "{{ new_bridge_binds }}"
+
+
+      - name: Re-up Bridge Interfaces
+        command: "nmcli conn up {{ item.brname }}"
+        when: ansible_hostname == "{{ item.hostname }}"
+        with_items: "{{ new_bridge_configs }}"
+    #- name: Set umask appropriately
+
