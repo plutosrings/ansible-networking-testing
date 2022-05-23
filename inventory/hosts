@@ -1,0 +1,8 @@
+localhost  ansible_connection=local ansible_python_interpreter="/usr/bin/python3"
+
+[rhel7-test-targets]
+rhel7-dev02
+rhel7-dev03
+
+
+

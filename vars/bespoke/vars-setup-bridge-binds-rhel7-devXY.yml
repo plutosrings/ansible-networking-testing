@@ -1,0 +1,32 @@
+---
+  # Bridges must be created prior to vlan interfaces, vlan interfaces are created with bridges as their respective master interface 
+  new_bridge_configs:
+  - { "hostname": "rhel7-dev02", "brname": "br-lan", "ip4": "", "gw4": "", "dns4": "", "dns4_search": ""}
+  - { "hostname": "rhel7-dev02", "brname": "br.1010", "ip4": "20.10.10.22/24", "gw4": "", "dns4": "", "dns4_search": "", "ip6": "manual" }
+  - { "hostname": "rhel7-dev02", "brname": "br.1011", "ip4": "20.10.11.22/24", "gw4": "", "dns4": "", "dns4_search": "", "ip6": "manual" }
+  - { "hostname": "rhel7-dev02", "brname": "br.1012", "ip4": "20.10.12.22/24", "gw4": "", "dns4": "", "dns4_search": "", "ip6": "manual" }
+
+  - { "hostname": "rhel7-dev03", "brname": "br-lan", "ip4": "", "gw4": "", "dns4": "", "dns4_search": ""}
+  - { "hostname": "rhel7-dev03", "brname": "br.1010", "ip4": "20.10.10.23/24", "gw4": "", "dns4": "", "dns4_search": ""}
+  - { "hostname": "rhel7-dev03", "brname": "br.1011", "ip4": "20.10.11.23/24", "gw4": "", "dns4": "", "dns4_search": ""}
+  - { "hostname": "rhel7-dev03", "brname": "br.1012", "ip4": "20.10.12.23/24", "gw4": "", "dns4": "", "dns4_search": ""}
+
+
+
+  new_host_vlan_configs:
+  - { "hostname": "rhel7-dev02", "desc": "vlan-1010", "ethname": "eth1", "vlandev": "eth0", "vlanid": "1010", "ip4": "10.10.0.1/24", "ip6": "manual", "master": "br.1010" }
+  - { "hostname": "rhel7-dev02", "desc": "vlan-1011", "ethname": "eth1", "vlandev": "eth0", "vlanid": "1011", "ip4": "10.11.0.1/24", "ip6": "manual", "master": "br.1011" }
+  - { "hostname": "rhel7-dev02", "desc": "vlan-1012", "ethname": "eth1", "vlandev": "eth0", "vlanid": "1012", "ip4": "10.12.0.1/24", "ip6": "manual", "master": "br.1012" }
+
+  - { "hostname": "rhel7-dev03", "desc": "vlan-1010", "ethname": "eth1", "vlandev": "eth0", "vlanid": "1010", "ip4": "10.10.0.2/24", "ip6": "manual", "master": "br.1010" }
+  - { "hostname": "rhel7-dev03", "desc": "vlan-1011", "ethname": "eth1", "vlandev": "eth0", "vlanid": "1011", "ip4": "10.11.0.2/24", "ip6": "manual", "master": "br.1011" }
+  - { "hostname": "rhel7-dev03", "desc": "vlan-1012", "ethname": "eth1", "vlandev": "eth0", "vlanid": "1012", "ip4": "10.12.0.2/24", "ip6": "manual", "master": "br.1012" }
+
+
+
+
+
+
+  new_bridge_binds:
+  - { "hostname": "pegasus", "desc": "lab", "ifname": "eno1", "master": "br-lan", "ip4": "192.168.1.20/24", "gw4": "192.168.1.254", "dns4": "192.168.1.253", "dns4_search": "kg" }
+

@@ -1,12 +1,8 @@
 
 ---
   - name: Setup Bridge on Host
-    hosts: localhost
+    hosts: all
     become: yes
-    vars_files:
-      - vars/bespoke/vars-setup-bridge-binds-pegasus.yml
-    vars: 
-      live: false
     tasks:
       - name: Install needed network manager libs for RHEL 7
         ansible.builtin.package:

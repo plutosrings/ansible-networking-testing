@@ -1,0 +1,1 @@
+ansible-playbook -i inventory/ playbooks/remove-bridges.yml -e @vars/bespoke/vars-setup-bridge-binds-rhel7-devXY.yml -k -K -l rhel7-test-targets

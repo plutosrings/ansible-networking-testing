@@ -1,12 +1,8 @@
 
 ---
   - name: Setup Vlans on Host
-    hosts: localhost
+    hosts: all
     become: yes
-    vars_files:
-      - vars/vars-setup-vlans.yml
-    vars: 
-      live: false
     tasks:
       - name: Install needed network manager libs for RHEL 7
         ansible.builtin.package:
@@ -41,10 +37,11 @@
         when: ansible_hostname == "{{ item.hostname }}"
         with_items: "{{ new_host_vlan_configs }}"
 
-      - name: Disable ipv6 on Vlan Interfaces
-        command: "nmcli conn modify {{ item.ethname }}.{{ item.vlanid }} ipv6.method disabled"
-        when: ansible_hostname == "{{ item.hostname }}"
+      - name: Fedora Only Disable ipv6 on Vlan Interfaces
+        command: "nmcli conn modify {{ item.ethname }}.{{ item.vlanid }} ipv6.method {{ item.ip6 }}"
         with_items: "{{ new_host_vlan_configs }}"
+        when: ansible_hostname == "{{ item.hostname }}" and ansible_facts['distribution'] == "Fedora" and ansible_facts['distribution_major_version'] == "35"
+
 
       - name: Bind Vlan Interfaces to Bridges
         command: "nmcli conn modify {{ item.ethname }}.{{ item.vlanid }} connection.master {{ item.master }} connection.slave-type bridge"
